@@ -55,6 +55,10 @@ services:
     #
     mender-api-gateway:
         image: traefik:v2.8
+        ports:
+          - "8082:8082"
+          - "8080:8080"
+          - "8084:8084"
         extends:
             file: common.yml
             service: mender-base
@@ -69,6 +73,9 @@ services:
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
             - --providers.file.directory=/etc/traefik/config
+            - --api.insecure=true
+            - --api.dashboard=true
+            - --log.level=DEBUG
             #  Enable ACME (Let's Encrypt): automatic SSL.
             - "--certificatesresolvers.letsencrypt.acme.email=ggmethos@autistici.org"
             - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
@@ -79,35 +86,13 @@ services:
             - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
         labels:
             - "traefik.enable=true"
+            - "traefik.http.routers.mender-api-gateway-web.rule=Host(`mender.traefik.sobe.name`)"
+            - "traefik.http.routers.mender-api-gateway-web.entrypoints=http"
+            - "traefik.http.routers.mender-api-gateway-secure.rule=Host(`mender.traefik.sobe.name`)"
+            - "traefik.http.routers.mender-api-gateway-secure.entrypoints=https"
+            - "traefik.http.routers.mender-api-gateway-secure.tls.certresolver=mytlschallenge"
+            - "traefik.http.services.mender-api-gateway.loadbalancer.server.port=8084"
             - "traefik.docker.network=web"
-              #- "traefik.http.routers.menderserver-web.rule=Host(`mender.traefik.sobe.name`)"
-              # - "traefik.http.routers.menderserver-web.entrypoints=web"
-              #- "traefik.http.routers.menderserver-web-secured.rule=Host(`mender.traefik.sobe.name`)"
-              #- "traefik.http.routers.menderserver-web-secured.entrypoints=web-secured"
-              #- "traefik.http.routers.menderserver-web-secured.tls.certresolver=mytlschallenge"
-              #- "traefik.http.services.menderserver.loadbalancer.server.port=8084"
-              #- "traefik.http.routers.mender.rule=Host(`mender.traefik.sobe.name`)"
-            - "traefik.http.services.mender.loadbalancer.server.port=8084"
-            - "traefik.http.routers.mender.rule=Host(`mender.traefik.sobe.name`)"
-              #- "traefik.http.middlewares.mender-redirect.redirectregex.regex=^https://mender\\.traefik\\.sobe\\.name/$"
-              #- "traefik.http.middlewares.mender-redirect.redirectregex.replacement=https://mender.traefik.sobe.name/ui"
-            - "traefik.http.routers.mender.middlewares=mender-redirect"
-            - "traefik.http.routers.mender.entrypoints=websecure"
-            - "traefik.http.routers.mender-frontend.tls.certresolver=letsencrypt"
-                    # Enable the https entrypoint
-            - "traefik.http.routers.dashboard.entrypoints=websecure"
-            # The domain we want to listen to
-            - "traefik.http.routers.dashboard.rule=Host(`dashboard.traefik.sobe.name`)"
-            # We want to obtain a certificate through Let's Encrypt
-            - "traefik.http.routers.dashboard.tls=true"
-            - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
-      # We need to attach the api@internal service to the dashboard router
-      #  in order for the dashboard to be able to access the api (I think 🙈)
-            - "traefik.http.routers.dashboard.service=api@internal"
-            - "traefik.http.routers.mender.tls=true"
-              #- "traefik.http.routers.mender.service=api@
-
-
         volumes:
             # So that Traefik can listen to the Docker events
             - /var/run/docker.sock:/var/run/docker.sock:ro
