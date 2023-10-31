@@ -1,0 +1,2 @@
+# mender-mesh-setup
+remake
