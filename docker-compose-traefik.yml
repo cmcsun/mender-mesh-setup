@@ -16,11 +16,12 @@ services:
       - --providers.docker.network=web # Use the docker network web for communication between traefik and containser
       ## Entrypoints Settings - https://docs.traefik.io/routing/entrypoints/#configuration ##
       - --entrypoints.web.address=:80 # Define an entrypoint for port :80 named web (this can be whatever)
-      - --entrypoints.web-secured.address=:443 # Define an entrypoint for https on port :443 named web-secured (this can be whatever)
       ## Certificate Settings (Let's Encrypt) -  https://docs.traefik.io/https/acme/#configuration-examples ##
       - --certificatesresolvers.mytlschallenge.acme.tlschallenge=true
       - --certificatesresolvers.mytlschallenge.acme.email=chris@zignage.com
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
+      - --entrypoints.websecure.address=:443
+        #- --entrypoints.web-secured.address=:443
       - "--api.insecure=true" # This enables the dashboard without any authentication
       - "--api.dashboard=true"
       - "--log.level=DEBUG"

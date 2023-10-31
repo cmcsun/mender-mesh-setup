@@ -70,7 +70,7 @@ services:
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
             - --providers.file.directory=/etc/traefik/config
             #  Enable ACME (Let's Encrypt): automatic SSL.
-            - "--certificatesresolvers.letsencrypt.acme.email=your.name@example.com"
+            - "--certificatesresolvers.letsencrypt.acme.email=ggmethos@autistici.org"
             - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
             - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
             - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
@@ -92,7 +92,7 @@ services:
             - "traefik.http.middlewares.mender-redirect.redirectregex.regex=^https://mender\\.traefik\\.sobe\\.name/$"
             - "traefik.http.middlewares.mender-redirect.redirectregex.replacement=https://mender.traefik.sobe.name/ui"
             - "traefik.http.routers.mender.middlewares=mender-redirect"
-            - "traefik.http.routers.mender.entrypoints=web-secured"
+            - "traefik.http.routers.mender.entrypoints=websecure"
             - "traefik.http.routers.mender-frontend.tls.certresolver=letsencrypt"
                     # Enable the https entrypoint
             - "traefik.http.routers.dashboard.entrypoints=websecure"

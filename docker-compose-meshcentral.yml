@@ -48,7 +48,7 @@ services:
               - "traefik.http.routers.meshcentral-web.entrypoints=web"
               #- "traefik.http.routers.meshcentral-web.middlewares=redirect@file"
               - "traefik.http.routers.meshcentral-secured.rule=Host(`traefik.sobe.name`)"
-              - "traefik.http.routers.meshcentral-secured.entrypoints=web-secured"
+              - "traefik.http.routers.meshcentral-secured.entrypoints=websecure"
               - "traefik.http.routers.meshcentral-secured.tls.certresolver=mytlschallenge"
               - "traefik.http.services.meshcentral.loadbalancer.server.port=4430"
               - "traefik.docker.network=web"
