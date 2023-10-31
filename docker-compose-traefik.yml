@@ -7,6 +7,7 @@ services:
     ports:
       - '80:80' # http
       - '443:443' # https
+        #- '8080:8080' #dashboard port
     command:
       ## Provider Settings - https://docs.traefik.io/providers/docker/#provider-configuration ##
       - --providers.docker=true # Set docker as the provider for traefik
@@ -20,6 +21,9 @@ services:
       - --certificatesresolvers.mytlschallenge.acme.tlschallenge=true
       - --certificatesresolvers.mytlschallenge.acme.email=chris@zignage.com
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
+        #      - "--api.insecure=true" # This enables the dashboard without any authentication
+        #   - "--api.dashboard=true"
+        #- "--log.level=DEBUG"
         #- --entrypoints.http.address=:80
     volumes:
       - ./letsencrypt:/letsencrypt # Volume for certs (TLS)
@@ -38,6 +42,8 @@ services:
       - traefik.web.routers.traefik-dashboard-http.rule=Host(`dashboard.localhost`)
       # make traefik use this network
       - traefik.docker.network=web
+        #- traefik.http.routers.mender-old.rule=Host(`mender.localhost`)
+        #- traefik.http.services.mender-old.loadbalancer.server.port=8084
 networks:
   web:
     external: true

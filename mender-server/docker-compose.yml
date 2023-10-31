@@ -71,14 +71,22 @@ services:
             - --providers.file.directory=/etc/traefik/config
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.mender-api-gateway-web.rule=Host(`mender.traefik.sobe.name/`)"
-            - "traefik.http.routers.mender-api-gateway-web.entrypoints=web"
-            #- "traefik.http.routers.meshcentral-web.middlewares=redirect@file"
-            - "traefik.http.routers.mender-api-gateway-secured.rule=Host(`mender.traefik.sobe.name/`)"
-            - "traefik.http.routers.mender-api-gateway-secured.entrypoints=web-secured"
-            - "traefik.http.routers.mender-api-gateway-secured.tls.certresolver=mytlschallenge"
-            - "traefik.http.services.mender-api-gateway.loadbalancer.server.port=8082"
             - "traefik.docker.network=web"
+              #- "traefik.http.routers.menderserver-web.rule=Host(`mender.traefik.sobe.name`)"
+              # - "traefik.http.routers.menderserver-web.entrypoints=web"
+              #- "traefik.http.routers.menderserver-web-secured.rule=Host(`mender.traefik.sobe.name`)"
+              #- "traefik.http.routers.menderserver-web-secured.entrypoints=web-secured"
+              #- "traefik.http.routers.menderserver-web-secured.tls.certresolver=mytlschallenge"
+              #- "traefik.http.services.menderserver.loadbalancer.server.port=8084"
+              #- "traefik.http.routers.mender.rule=Host(`mender.traefik.sobe.name`)"
+            - "traefik.http.services.mender.loadbalancer.server.port=8084"
+            - "traefik.http.routers.mender.rule=Host(`mender.traefik.sobe.name`)"
+            - "traefik.http.middlewares.mender-redirect.redirectregex.regex=^https://mender\\.traefik\\.sobe\\.name/$"
+            - "traefik.http.middlewares.mender-redirect.redirectregex.replacement=https://mender.traefik.sobe.name/ui"
+            - "traefik.http.routers.mender.middlewares=mender-redirect"
+            - "traefik.http.routers.mender.entrypoints=web-secured"
+
+
 
 
 
